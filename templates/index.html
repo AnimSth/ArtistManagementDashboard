@@ -1,0 +1,58 @@
+
+{% block title %}
+<title>Dashboard</title>
+{% endblock %}
+
+<!-- Add this to the head of your HTML file -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/UserList">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Artists</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="logout"  onclick="return confirm('Are you sure you want to log out?')">Log Out</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    {% block content %}
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Welcome {{admin_name}}</h1>
+    </div>
+
+
+
+  
+    <ul>
+        {% for user in users %}
+            <li>{{ user }} - <a href="/edit_user/{{ user.id }}" >Edit</a> - <a href="/delete_user/{{ user.id }}">Delete</a></li>
+        {% endfor %}
+    </ul>
+    <form action="/add_user" method="post">
+        <input type="text" name="username" placeholder="Username" required>
+        <button type="submit">Add User</button>
+    </form>
+
+{% endblock %}
+{% block script %}
+{% endblock %}
+
+
+
+

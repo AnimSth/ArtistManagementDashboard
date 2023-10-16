@@ -1,0 +1,21 @@
+/* .messages {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+.flash {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+.flash.fade-out {
+    animation: fadeOut 2s ease-in-out forwards;
+}
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+} */
