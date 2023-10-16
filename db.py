@@ -2,7 +2,7 @@ import psycopg2
 
 
 
-db_config = 'postgres://zxahtzhj:fHjZ2nedJAwebEknKUSiNDxb1y445bPJ@suleiman.db.elephantsql.com/zxahtzhj'
+db_config = ''
 
 def init_db():  
     connection = psycopg2.connect('postgres://zxahtzhj:fHjZ2nedJAwebEknKUSiNDxb1y445bPJ@suleiman.db.elephantsql.com/zxahtzhj')
