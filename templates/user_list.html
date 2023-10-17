@@ -1,79 +1,260 @@
-{% extends 'index.html' %}
-{% block title %}
-    <title>Users List</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+<!--    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="/static/js/datatables/datatables.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<style>
+    .modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  overflow: auto; /* Enable scroll if needed */
+  padding: 20 20 0 20;
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 0; /* 15% from the top and centered */
+  padding: 20px;
+  width: 50%;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
+{% block title%}
+<title>Users List</title>
+{% endblock %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/UserList">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/ArtistList">Artists</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="logout"  onclick="return confirm('Are you sure you want to log out?')">Log Out</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <!-- <strong>Title</strong> --> {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+{% endwith %}
+{% block content %}
+<button type="button" class="btn btn-primary" onclick="register_user()" style="margin-left: 50px;margin-bottom: 10px;width: 110px; font-size: 12px; white-space: nowrap;text-overflow: ellipsis;"> ADD USERS</button>
+
+
+        <div class="row" style="padding-left:4%;margin: 0;">
+
+                <div class="card shadow mb-4">
+                    <div
+                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Registered Users</h6>
+                    </div>
+                    <div class="card-body">
+                        <table id='empTable' class='display dataTable' width='100%'>
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Fullname</th>
+                                <th>Gender</th>
+                                <th>email</th>
+                            </tr>
+                            </thead>
+                                
+                        </table>
+                    </div>
+                </div>
+
+                
+           
+        </div>
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <div id="editfarmtoolbody" >
+            
+              </div>
+            </div>
+          
+          </div>
 
 {% endblock %}
-{% block content %}
-<div class="container">
-    <table id="userTable" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-    </table>
-    <div  id="editfarmtoolbody" ></div>
-</div>
- 
-    {% endblock %}
 
-    {% block script %}
+{% block script %}
+<script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.0.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var csrftoken = $('meta[name=csrf-token]').attr('content')
-            $.ajaxSetup({
-                beforeSend: function(xhr, settings) {
-                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+<script type="text/javascript">
+$(document).ready(function() {
+    var csrftoken = $('meta[name=csrf-token]').attr('content')
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+});
+</script>
+<script>
+    $(document).ready(function() {
+      
+        var empDataTable = $('#empTable').DataTable({
+                    'processing': true,
+                    'serverSide': true,
+                    'serverMethod': 'post',
+                    'ajax': {
+                        'url':'/users_data',
+                    },
+                    'lengthMenu': [[5, 10, 25, 50, 10000], [5, 10, 25, 50, "All"]],
+                    searching: true,
+                    sort: true,
+                    "serverSide": true,
+                    'columns': [ 
+                        {'data': 'id'},
+                        {
+                            'data': null, 
+                            'render': function (data, type, row) {
+                                return row.first_name + ' ' + row.last_name;
+                            }
+                        },
+                        {'data': 'phone'}, 
+                    
+                        {'data': 'email'},
+                        
+                    ],
+                    dom: 'lBfrtip',
+					buttons: [
+                            {
+                            extend: "excelHtml5",
+                            exportOptions: { orthogonal: "exportxls" }
+                        },
+                        {
+                            extend: 'csv',
+                            title: 'Data Export (CSV)',
+                            exportOptions: {
+                                orthogonal: 'exportcsv'
+                            }
+                        }
+						]
+                
+                });
+                var modal = document.getElementById("myModal");
+
+                    // Get the button that opens the modal
+                    var btn = document.getElementById("myBtn");
+
+                    // Get the <span> element that closes the modal
+                    var span = document.getElementsByClassName("close")[0];
+
+                    // When the user clicks on the button, open the modal
+                 
+
+                    // When the user clicks on <span> (x), close the modal
+                    span.onclick = function() {
+                    modal.style.display = "none";
                     }
-                }
-            });
-        });
-        </script>
-    <script>
-        $(document).ready(function () {
-            $('#userTable').DataTable({
-                'processing': true,
-                'serverSide': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url': '/users_data',
-                },
-                'columns': [
-                    {'data': 'id'},
-                    {'data': 'first_name'},
-                    {'data': 'last_name'},
-                    {'data': 'email'}
-                ]
-            });
-        });
-    </script>
-    <script>
-          $('#userTable').on('click', 'tbody tr', function() {
-            var table = $('.dataTable').DataTable();
-            var id = table.row(this).data().id;
-            $.ajax({
-                url: '/userdata/'+ id,
+
+                    $('#empTable').on('click', 'tbody tr', function() {
+                    var id = empDataTable.row(this).data().id;
+                    $.ajax({
+                        url: '/edit_user/' + id,
+                        type: 'GET',
+                        success: function(response){
+                            modal.style.display = "block";
+                            if (event.target == modal) {
+                                modal.style.display = "none";
+                            };
+                            
+                            console.log(response);
+                            $('#editfarmtoolbody').html(response); // No need for window.$
+                        },
+                        error: function(error){
+                            console.log(error);
+                        }
+                    });
+                });
+                    
+    });
+
+
+                
+</script>
+<script>
+    function register_user(){
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("myBtn");
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        $.ajax({
+                url: '/register_user',
                 type: 'GET',
                 success: function(response){
+                    modal.style.display = "block";
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    };
+                    
                     console.log(response);
-                    window.$('#editfarmtoolbody').html(response);
+                    $('#editfarmtoolbody').html(response); // No need for window.$
                 },
                 error: function(error){
                     console.log(error);
                 }
-            })});
-    </script>
+            });
+
+
+    }
+</script>
 {% endblock %}
+
 

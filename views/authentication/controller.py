@@ -59,16 +59,13 @@ def fetch_user(email:str):
 def admin_registration(user_info: dict):
     try:
         with psycopg2.connect(db_config) as connection, connection.cursor() as cursor:
-            # Check if the user email already exists
             select_query = "SELECT 1 FROM admin WHERE email = %s;"
             cursor.execute(select_query, (user_info.get('email'),))
             user = cursor.fetchone()
 
             if user is None:
-                # Hash the user's password
                 user_info['password'] = generate_password_hash(user_info.get("password"))
 
-                # Insert the user into the database
                 insert_query = """
                     INSERT INTO admin (first_name, last_name, email, dob, phone, address, gender, password)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
@@ -94,3 +91,4 @@ def admin_registration(user_info: dict):
 
     except Exception as e:
         return {"success": False, "message": "User couldn't be registered", "exception": str(e)}
+

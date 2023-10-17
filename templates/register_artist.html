@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>Register Artist</title>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock %}
+{% block content %}
+
+<section class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+      <div class="row justify-content-center align-items-center h-100">
+        <div class="col-12 col-form-control-sm-9 col-xl-7">
+          <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+            <div class="card-body p-4 p-md-5">
+              <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration Artist</h3>
+              <form action="/register_artist" method="post" >
+                <input type="text" hidden="hidden" name="csrf_token" value="{{csrf_token()}}">
+
+              <!-- <form action="/register_admin" onsubmit="register_admin()"> -->
+                <label class="form-label" style="color: #007bff;">Personal Information</label>
+                
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+  
+                    <div class="form-outline">
+                      <input type="text" id="first_name" pattern="[A-Za-z\s]+" value="{{ submitted_data.name|default('') }}" name="name" title="Please enter a valid name." class="form-control form-control-sm" placeholder="Name" required />
+                    </div>
+  
+                  </div>
+                  <div class="col-md-6 mb-4 pb-2">
+    
+                    <div class="form-outline">
+                      <input type="text" id="address" name="address" class="form-control form-control-sm"  value="{{ submitted_data.address|default('') }}"  placeholder="Address" required />
+                    </div>
+  
+                  </div>
+
+                </div>
+ 
+                <div class="row">
+                  <div class="col-md-6 mb-4 d-flex align-items-center">
+  
+                    <div class="form-outline datepicker w-100">
+                        <label class="form-label"  style="color: #007bff;">Date of Birth:</label>
+
+                      <input type="date" name="dob"  value="{{ submitted_data.dob|default('') }}" class="form-control form-control-sm" id="dateOfBirth" placeholder="Date of Birth" required/>
+                    </div>
+  
+                  </div>
+                  <div class="col-md-6 mb-4">
+  
+                    <label class="form-label" style="color: #007bff;">Gender: </label>  
+                  </br>
+  
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="gender" id="femaleGender"
+                        value="f" {% if submitted_data.gender == 'f' %}checked{% endif %} />
+                    <label class="form-check-label" for="femaleGender">Female</label>
+                </div>
+            
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="gender" id="maleGender"
+                        value="m" {% if submitted_data.gender == 'm' %}checked{% endif %} />
+                    <label class="form-check-label" for="maleGender">Male</label>
+                </div>
+            
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="gender" id="otherGender"
+                        value="o" {% if submitted_data.gender == 'o' %}checked{% endif %} />
+                    <label class="form-check-label" for="otherGender">Other</label>
+                </div>
+  
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-4 pb-2">
+    
+                        <div class="form-outline">
+                          <label class="form-label" style="color: #007bff;">First Release Year:</label>
+
+                          <select name="first_release_year" id="first_release_year" ></select>
+
+                  
+                        </div>
+                    
+                    </div>
+                    <div class="col-md-6 mb-4 pb-2">
+    
+                      <div class="form-outline">
+                        <input type="number" id="no_of_albums_released" class="form-control form-control-sm"  name="no_of_albums_released" placeholder="No. of albums released" required>
+                      </div>
+    
+                    </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-4 pb-2">
+
+                    <button class="btn btn-primary btn-form-control-sm" type="submit" value="Submit">Submit</button>
+                  </div>
+
+                </div>
+  
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endblock %}
+
+
+  {% block script %}
+  
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+            <script type="text/javascript">
+              let startYear = 1800;
+              let endYear = new Date().getFullYear();
+              for (i = endYear; i > startYear; i--)
+              {
+                $('#first_release_year').append($('<option />').val(i).html(i));
+              }
+              </script>
+  
+  {% endblock %}
+  

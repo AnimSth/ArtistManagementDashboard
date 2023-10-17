@@ -10,16 +10,14 @@ def init_db():
     cursor = connection.cursor()
 
     create_table_query = """
-    CREATE TABLE IF NOT EXISTS admin (
+    CREATE TABLE IF NOT EXISTS artist (
         id SERIAL PRIMARY KEY,
-        first_name VARCHAR(255) NOT NULL,
-        last_name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL UNIQUE,
-        password VARCHAR(500) NOT NULL,
-        phone VARCHAR(20),
+        name VARCHAR(255) NOT NULL,
         dob DATE,
         gender VARCHAR(10),
         address VARCHAR(255),
+        first_release_year INT,
+        no_of_albums_released INT,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
     );

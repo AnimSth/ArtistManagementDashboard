@@ -1,0 +1,184 @@
+{% extends 'user_list.html' %}
+{% block title %}
+<title>Artist List</title>
+{% endblock %}
+
+{% block content %}
+<button type="button" class="btn btn-primary" onclick="register_artist()" style="margin-left: 50px;margin-bottom: 10px;width: 110px; font-size: 12px; white-space: nowrap;text-overflow: ellipsis;"> ADD ARTIST</button>
+
+<form method="POST" enctype="multipart/form-data" action="/upload_csv">
+    <input type="text" hidden="hidden" name="csrf_token" value="{{csrf_token()}}">
+   
+    <input type="file" name="csv_file">
+    <input type="submit" value="Upload">
+</form>
+
+<div class="row" style="padding-left:4%;margin: 0;">
+
+    <div class="card shadow mb-4">
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Artist</h6>
+        </div>
+        <div class="card-body">
+            <table id='empTable' class='display dataTable' width='100%'>
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Fullname</th>
+                    <th>Date of Birth</th>
+                    <th>Address</th>
+                    <th>Gender</th>
+                    <th>First Year Release</th>
+                    <th>No. of albums released</th>
+                    <th>Date added</th>
+                </tr>
+                </thead>
+                    
+            </table>
+        </div>
+    </div>
+
+    
+
+</div>
+<div id="myModal" class="modal">
+
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="editfarmtoolbody" >
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.0.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var csrftoken = $('meta[name=csrf-token]').attr('content')
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+});
+</script>
+<script>
+    $(document).ready(function() {
+      
+        var empDataTable = $('#empTable').DataTable({
+                    'processing': true,
+                    'serverSide': true,
+                    'serverMethod': 'post',
+                    'ajax': {
+                        'url':'/artist_data',
+                    },
+                    'lengthMenu': [[5, 10, 25, 50, 10000], [5, 10, 25, 50, "All"]],
+                    searching: true,
+                    sort: true,
+                    "serverSide": true,
+                    'columns': [ 
+                        {'data': 'id'},
+                        {'data': 'name'}, 
+                        {'data': 'dob'}, 
+                        {'data': 'address'}, 
+                        {'data': 'gender'},
+                        {'data': 'first_release_year'},
+                        {'data': 'no_of_albums_released'},
+                        {'data': 'created_at'},
+                        
+                    ],
+                    dom: 'lBfrtip',
+					buttons: [
+                            {
+                            extend: "excelHtml5",
+                            exportOptions: { orthogonal: "exportxls" }
+                        },
+                        {
+                            extend: 'csv',
+                            title: 'Data Export (CSV)',
+                            exportOptions: {
+                                orthogonal: 'exportcsv'
+                            }
+                        }
+						]
+                
+                });
+                var modal = document.getElementById("myModal");
+
+                var btn = document.getElementById("myBtn");
+
+                var span = document.getElementsByClassName("close")[0];
+
+                
+
+                span.onclick = function() {
+                modal.style.display = "none";
+                }
+
+                    $('#empTable').on('click', 'tbody tr', function() {
+                    var id = empDataTable.row(this).data().id;
+                    $.ajax({
+                        url: '/edit_artist/' + id,
+                        type: 'GET',
+                        success: function(response){
+                            modal.style.display = "block";
+                            if (event.target == modal) {
+                                modal.style.display = "none";
+                            };
+                            
+                            console.log(response);
+                            $('#editfarmtoolbody').html(response); // No need for window.$
+                        },
+                        error: function(error){
+                            console.log(error);
+                        }
+                    });
+                });
+                    
+    });
+
+
+                
+</script>
+<script>
+    function register_artist(){
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("myBtn");
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        $.ajax({
+                url: '/register_artist',
+                type: 'GET',
+                success: function(response){
+                    modal.style.display = "block";
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    };
+                    
+                    console.log(response);
+                    $('#editfarmtoolbody').html(response); // No need for window.$
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            });
+
+
+    }
+</script>
+{% endblock %}
+
+

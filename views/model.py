@@ -106,4 +106,31 @@ def check_number(number):
         return True 
     return False
 
+class registerArtistForm():
+    def __init__(self,name,address,dob,gender,first_release_year, no_of_albums_released):
+        self.name :str = name
+        self.address: str = address
+        self.dob: datetime= dob
+        self.gender: str = gender
+        self.first_release_year: datetime = first_release_year
+        self.no_of_albums_released: int = no_of_albums_released
+
+
+    def validate(self):
+        if not isinstance(self.dob, datetime) and not isinstance(self.first_release_year, datetime):
+            return {"success":False,"message":"Please enter a valid date."}    
+            
+        if not isinstance(self.no_of_albums_released, int):
+            return {"success":False,"message":"Please enter a valid no. of albums released."}    
+
+        if self.gender not in ['f',"m",'o']:
+            return {"success":False,"message":"Please choose a gender."}
+        
+        if len(self.name) < 2 or len(self.name) > 255:
+            return {"success":False,"message":"Name must be between 2 and 255 characters."}
+
+        if not self.name.replace(' ','').isalpha():
+            return {"success":False,"message":"Name must be between 2 and 100 characters."}
+        
+        return {"success":True, "message":"Please proceed."}
 

@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}
-<title>Edit User</title>
+<title>Register Admin</title>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {% endblock %}
 {% block content %}
-<a href="/delete_user/{{submitted_data.id}}" style="color:white" onclick="return confirm('Are you sure you want to delete the user?')"><button type="button" class="btn btn-primary" style="background-color: red; margin-left: 50px;margin-bottom: 10px;width: 110px; font-size: 12px; white-space: nowrap;text-overflow: ellipsis;border: 0;"> DELETE</button></a>
 
 <section class="vh-100 gradient-custom">
     <div class="container py-5 h-100">
@@ -14,8 +13,8 @@
         <div class="col-12 col-form-control-sm-9 col-xl-7">
           <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
             <div class="card-body p-4 p-md-5">
-              <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Edit User</h3>
-              <form action="/edit_user/{{submitted_data.id}}" method="post" >
+              <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration User</h3>
+              <form action="/register_user" method="post" >
                 <input type="text" hidden="hidden" name="csrf_token" value="{{csrf_token()}}">
 
               <!-- <form action="/register_admin" onsubmit="register_admin()"> -->
@@ -41,14 +40,14 @@
                     <div class="col-md-6 mb-4 pb-2">
     
                       <div class="form-outline">
-                        <input type="email" id="emailAddress" name="email" readonly value="{{ submitted_data.email|default('') }}"  class="form-control form-control-sm" placeholder="Email" required/>
+                        <input type="email" id="emailAddress" name="email"  value="{{ submitted_data.email|default('') }}"  class="form-control form-control-sm" placeholder="Email" required/>
                       </div>
     
                     </div>
                     <div class="col-md-6 mb-4 pb-2">
     
                       <div class="form-outline">
-                        <input type="tel" id="phoneNumber" name="phonenumber" pattern="[0-9]{10}"  value="{{ submitted_data.phone|default('') }}"  title="Please enter a 10-digit phone number." class="form-control form-control-sm" placeholder="Phonenumber" required />
+                        <input type="tel" id="phoneNumber" name="phonenumber" pattern="[0-9]{10}"  value="{{ submitted_data.phonenumber|default('') }}"  title="Please enter a 10-digit phone number." class="form-control form-control-sm" placeholder="Phonenumber" required />
                       </div>
     
                     </div>
@@ -104,7 +103,7 @@
                     <div class="col-md-6 mb-4 pb-2">
     
                         <div class="form-outline">
-                            <input type="password" name="password" id="password" class="form-control form-control-sm"  name="password" placeholder="Enter a Password" required>
+                            <input type="password" name="password" id="password" value="{{ submitted_data.password|default('') }}" class="form-control form-control-sm"  name="password" placeholder="Enter a Password" required>
                         </div>
                     
                     </div>
@@ -123,6 +122,7 @@
 
                     <button class="btn btn-primary btn-form-control-sm" type="submit" value="Submit">Submit</button>
                   </div>
+                  <a href="/login" rel="noopener noreferrer">Already have an account? Log in.</a>
 
                 </div>
   

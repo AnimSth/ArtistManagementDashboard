@@ -75,6 +75,3 @@ def logout():
     flash("You have been logged out!", "success")
     return redirect('/login')
 
-
-
-    
