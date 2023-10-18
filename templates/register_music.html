@@ -1,0 +1,97 @@
+
+<title>Register Music</title>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<section class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+      <div class="row justify-content-center align-items-center h-100">
+        <div class="col-12 col-form-control-sm-9 col-xl-7">
+          <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+            <div class="card-body p-4 p-md-5">
+              <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration Music</h3>
+              <form action="/register_music/{{id}}" method="post" >
+                <input type="text" hidden="hidden" name="csrf_token" value="{{csrf_token()}}">
+
+              <!-- <form action="/register_admin" onsubmit="register_admin()"> -->
+                <label class="form-label" style="color: #007bff;">Song Information</label>
+                
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+  
+                    <div class="form-outline">
+                      <input type="text" id="title" pattern="[A-Za-z\s]+" value="{{ submitted_data.title|default('') }}" name="title" title="Please enter a valid title." class="form-control form-control-sm" placeholder="title" required />
+                    </div>
+  
+                  </div>
+                  <div class="col-md-6 mb-4 pb-2">
+    
+                    <div class="form-outline">
+                      <input type="text" id="album_name" pattern="[A-Za-z\s]+"  name="album_name" class="form-control form-control-sm"  value="{{ submitted_data.album_name|default('') }}"  placeholder="Album Name" required />
+                    </div>
+  
+                  </div>
+
+                </div>
+ 
+                <div class="row">
+              
+                  <div class="col-md-6 mb-4">
+  
+                    <label class="form-label" style="color: #007bff;">Genre: </label>  
+                  </br>
+  
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="genre" id="rnb"
+                        value="rnb" {% if submitted_data.genre == 'rnb' %}checked{% endif %} />
+                    <label class="form-check-label" for="rnb">RnB</label>
+                </div>
+            
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="genre" id="country"
+                        value="country" {% if submitted_data.genre == 'country' %}checked{% endif %} />
+                    <label class="form-check-label" for="country">Country</label>
+                </div>
+            
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="genre" id="classic"
+                        value="classic" {% if submitted_data.genre == 'classic' %}checked{% endif %} />
+                    <label class="form-check-label" for="classic">Classic</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="genre" id="rock"
+                      value="rock" {% if submitted_data.genre == 'rock' %}checked{% endif %} />
+                  <label class="form-check-label" for="rock">Rock</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="genre" id="jazz"
+                    value="jazz" {% if submitted_data.genre == 'jazz' %}checked{% endif %} />
+                <label class="form-check-label" for="jazz">Jazz</label>
+            </div>
+                
+  
+                  </div>
+                </div>
+      
+                <div class="row">
+                  <div class="col-md-6 mb-4 pb-2">
+
+                    <button class="btn btn-primary btn-form-control-sm" type="submit" value="Submit">Submit</button>
+                  </div>
+
+                </div>
+  
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+
+  
+
+  

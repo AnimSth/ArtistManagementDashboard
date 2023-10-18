@@ -1,11 +1,9 @@
-{% extends 'base.html' %}
-{% block title %}
+
 <title>Edit User</title>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-{% endblock %}
-{% block content %}
+
 <a href="/delete_user/{{submitted_data.id}}" style="color:white" onclick="return confirm('Are you sure you want to delete the user?')"><button type="button" class="btn btn-primary" style="background-color: red; margin-left: 50px;margin-bottom: 10px;width: 110px; font-size: 12px; white-space: nowrap;text-overflow: ellipsis;border: 0;"> DELETE</button></a>
 
 <section class="vh-100 gradient-custom">
@@ -133,10 +131,7 @@
       </div>
     </div>
   </section>
-  {% endblock %}
 
-
-  {% block script %}
   
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
       <script>
@@ -187,8 +182,5 @@
                   alert(error["message"]);
               }});
 
-  
-              }
-      </script> -->
-  {% endblock %}
+
   

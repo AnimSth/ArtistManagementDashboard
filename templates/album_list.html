@@ -1,37 +1,27 @@
 {% extends 'user_list.html' %}
 {% block title %}
-<title>Artist List</title>
+<title>Music List</title>
 {% endblock %}
 
 {% block content %}
-<button type="button" class="btn btn-primary" onclick="register_artist()" style="margin-left: 50px;margin-bottom: 10px;width: 110px; font-size: 12px; white-space: nowrap;text-overflow: ellipsis;"> ADD ARTIST</button>
+<button type="button" class="btn btn-primary" onclick="register_music()" style="margin-left: 50px;margin-bottom: 10px;width: 110px; font-size: 12px; white-space: nowrap;text-overflow: ellipsis;"> ADD MUSIC</button>
 
-<form method="POST" enctype="multipart/form-data" action="/upload_csv">
-    <input type="text" hidden="hidden" name="csrf_token" value="{{csrf_token()}}">
-   
-    <input type="file" name="csv_file">
-    <input type="submit" value="Upload">
-</form>
 
 <div class="row" style="padding-left:4%;margin: 0;">
 
     <div class="card shadow mb-4">
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Artist</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Artist Music</h6>
         </div>
         <div class="card-body">
             <table id='empTable' class='display dataTable' width='100%'>
                 <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Fullname</th>
-                    <th>Date of Birth</th>
-                    <th>Address</th>
-                    <th>Gender</th>
-                    <th>First Year Release</th>
-                    <th>No. of albums released</th>
-                    <th>Date added</th>
+                    <th>Title</th>
+                    <th>Album name</th>
+                    <th>Genre</th>
+                    <th>created_at</th>
                 </tr>
                 </thead>
                     
@@ -81,20 +71,16 @@ $(document).ready(function() {
                     'serverSide': true,
                     'serverMethod': 'post',
                     'ajax': {
-                        'url':'/artist_data',
+                        'url':'/view_albums/{{id}}',
                     },
                     'lengthMenu': [[5, 10, 25, 50, 10000], [5, 10, 25, 50, "All"]],
                     searching: true,
                     sort: true,
                     "serverSide": true,
                     'columns': [ 
-                        {'data': 'id'},
-                        {'data': 'name'}, 
-                        {'data': 'dob'}, 
-                        {'data': 'address'}, 
-                        {'data': 'gender'},
-                        {'data': 'first_release_year'},
-                        {'data': 'no_of_albums_released'},
+                        {'data': 'title'},
+                        {'data': 'album_name'}, 
+                        {'data': 'genre'}, 
                         {'data': 'created_at'},
                         
                     ],
@@ -128,10 +114,10 @@ $(document).ready(function() {
 
                     $('#empTable').on('click', 'tbody tr', function() {
                     $('.god').show();
-
-                    var id = empDataTable.row(this).data().id;
+                    
+                    var id = empDataTable.row(this).data().title;
                     $.ajax({
-                        url: '/edit_artist/' + id,
+                        url: '/edit_album/{{id}}/' + id,
                         type: 'GET',
                         success: function(response){
                             $('.god').hide();
@@ -158,7 +144,7 @@ $(document).ready(function() {
                 
 </script>
 <script>
-    function register_artist(){
+    function register_music(){
         var modal = document.getElementById("myModal");
         var btn = document.getElementById("myBtn");
         var span = document.getElementsByClassName("close")[0];
@@ -166,7 +152,7 @@ $(document).ready(function() {
             modal.style.display = "none";
         }
         $.ajax({
-                url: '/register_artist',
+                url: '/register_music/{{id}}',
                 type: 'GET',
                 success: function(response){
                     modal.style.display = "block";

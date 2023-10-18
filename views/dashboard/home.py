@@ -7,7 +7,7 @@ from flask import (Blueprint,
 	jsonify,
 	Response)
 
-from ..model import LoginForm,registerAdminForm,registerArtistForm
+from ..model import LoginForm,registerAdminForm,registerArtistForm, registerMusicForm
 from .controller import *
 import psycopg2
 from db import db_config
@@ -20,8 +20,9 @@ dash = Blueprint('dashboard', __name__,static_url_path='/static',static_folder='
 @dash.route('/',methods= ["GET"])
 @admin_required()
 def home():
-    users = get_users()
-    return render_template('index.html', users = users, admin_name=session.get("username"))
+    counts = get_table_data_counts()
+    print(counts)
+    return render_template('index.html', counts = counts, admin_name=session.get("username"))
 
 
 @dash.route('/UserList')
@@ -115,6 +116,48 @@ def artist_data():
 
     return jsonify(response)
 
+@dash.route('/view_albums/<id>', methods=['POST','GET'])
+@admin_required()
+def view_artist_albums(id):
+    if request.method =='POST':
+        columns = ['title', 'album_name','genre','created_at']
+
+        draw = request.form.get('draw')
+        start = request.form.get('start')
+        length = request.form.get('length')
+        search_value = request.form.get('search[value]')
+
+        with psycopg2.connect(db_config) as connection, connection.cursor() as cursor:
+            base_query = f"SELECT {', '.join(columns)} FROM music WHERE artist_id = {id}"
+
+            if search_value:
+                search_query = f"{base_query} AND title ILIKE '%{search_value}%'"
+            else:
+                search_query = base_query
+
+            cursor.execute(search_query)
+            total_records = len(cursor.fetchall())
+
+            order_column_index = int(request.form.get('order[0][column]'))
+            order_column = columns[order_column_index]
+            order_dir = request.form.get('order[0][dir]')
+            order_query = f"{search_query} ORDER BY {order_column} {'DESC' if order_dir == 'desc' else 'ASC'}"
+
+            paginated_query = f"{order_query} LIMIT {length} OFFSET {start}"
+
+            cursor.execute(paginated_query)
+            data = [dict(zip(columns, row)) for row in cursor]
+
+            response = {
+                'draw': draw,
+                'recordsTotal': total_records,
+                'recordsFiltered': total_records,
+                'data': data
+            }
+
+        return jsonify(response)
+    return render_template('album_list.html', id= id)
+
 @dash.route('/userdata/<id>', methods=['POST', 'GET'])
 @admin_required()
 def user_D(id):
@@ -199,6 +242,12 @@ def delete_artist_route(id):
     delete_artist(id)
     return redirect('/ArtistList') 
 
+@dash.route('/delete_artists_music/<id>/<title>',methods= ['POST','GET'])
+def delete_artists_music(id,title):  
+    delete_song(id,title)
+    return redirect(f'/view_albums/{id}')
+ 
+
 @dash.route('/edit_artist/<id>',methods= ['POST','GET'])
 def edit_artist_route(id):
     if request.method =='POST':
@@ -247,7 +296,7 @@ def register_artist():
         session['submitted_data'] = request.form
 
         registeredArtist_info['dob'] = datetime.fromisoformat(dob) if dob!= None else ""
-        registeredArtist_info['no_of_albums_released'] = int(noa ) if dob!= None else 1
+        registeredArtist_info['no_of_albums_released'] = int(noa ) if noa!= None else 1
         form = registerArtistForm(**registeredArtist_info)
         form = form.validate()
         if form["success"]:
@@ -261,6 +310,63 @@ def register_artist():
         return redirect('/register_artist')
     submitted_data = session.get('submitted_data', {})
     return render_template('register_artist.html',submitted_data=submitted_data)
+
+
+@dash.route('/register_music/<id>',methods= ['POST','GET'])
+def register_music(id):
+    if request.method =='POST':
+        registeredMusic_info ={
+            "title": request.form.get('title'),
+            "album_name" : request.form.get('album_name'),
+            "genre" : request.form.get('genre'),
+            }
+        session['submitted_data'] = request.form
+        id = int(id) if id.isnumeric() else id
+
+        form = registerMusicForm(**registeredMusic_info)
+        form = form.validate()
+        if form["success"]:
+            session.pop('submitted_data', None)
+            validate_user = music_registration(registeredMusic_info, id)
+            if validate_user["success"]:
+                return redirect(f'/view_albums/{id}')
+            flash(validate_user["message"], 'danger') 
+            return redirect(f'/view_albums/{id}')
+         
+        flash(form["message"], 'danger')
+        return redirect(f'/view_albums/{id}')
+
+    submitted_data = session.get('submitted_data', {})
+    return render_template('register_music.html',submitted_data=submitted_data, id = id)
+
+
+@dash.route('/edit_album/<id>/<title>',methods= ['POST','GET'])
+def edit_music(id,title):
+    song_details =fetch_artistsong(id,title)
+    if request.method =='POST':
+        registeredMusic_info ={
+            "title": request.form.get('title'),
+            "album_name" : request.form.get('album_name'),
+            "genre" : request.form.get('genre'),
+            }
+        session['submitted_data'] = request.form
+        id = int(id) if id.isnumeric() else id
+
+        form = registerMusicForm(**registeredMusic_info)
+        form = form.validate()
+        if form["success"]:
+            session.pop('submitted_data', None)
+            registeredMusic_info['prev_title']=title
+            validate_user = edit_Amusic(registeredMusic_info, id)
+            if validate_user["success"]:
+                return redirect(f'/view_albums/{id}')
+            flash(validate_user["message"], 'danger') 
+            return redirect(f'/view_albums/{id}')
+         
+        flash(form["message"], 'danger')
+        return redirect(f'/view_albums/{id}')
+
+    return render_template('edit_music.html',submitted_data=song_details, id = id,title=title)
 
 @dash.route('/upload_csv', methods=['POST'])
 def upload_csv():

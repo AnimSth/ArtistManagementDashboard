@@ -24,9 +24,11 @@ def login():
             }
         form = LoginForm(**login_info)
         form = form.validate()
+        print(form)
 
         if form["success"]:
             validate_user = user_validation(login_info)
+            print(validate_user)
 
             if validate_user["success"]:
                 return redirect('/')

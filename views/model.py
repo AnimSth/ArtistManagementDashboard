@@ -134,3 +134,22 @@ class registerArtistForm():
         
         return {"success":True, "message":"Please proceed."}
 
+
+class registerMusicForm():
+    def __init__(self,title,album_name,genre):
+        self.title :str = title
+        self.album_name: str = album_name
+        self.genre: str = genre
+
+    def validate(self):
+        if self.genre not in ['rnb',"country",'classic','rock','jazz']:
+            return {"success":False,"message":"Please choose a genre."}
+        
+        if len(self.title) < 2 or len(self.title) > 255:
+            return {"success":False,"message":"Title must be between 2 and 255 characters."}
+
+        if not self.title.replace(' ','').isalpha() and not self.album_name.replace(' ','').isalpha():
+            return {"success":False,"message":"Title and album name must be between 2 and 100 characters."}
+        
+        return {"success":True, "message":"Please proceed."}
+

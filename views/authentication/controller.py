@@ -34,6 +34,7 @@ def logged_in(f):
 def user_validation(user_info:dict):
     try:
         user = fetch_user(user_info.get('email'))
+        print(user)
         if user:
             if check_password_hash(user.get('password'), user_info.get('password')):
                 session['user_id'] = user.get('id') 
