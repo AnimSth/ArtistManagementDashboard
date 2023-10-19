@@ -34,14 +34,13 @@ def logged_in(f):
 def user_validation(user_info:dict):
     try:
         user = fetch_user(user_info.get('email'))
-        print(user)
         if user:
             if check_password_hash(user.get('password'), user_info.get('password')):
                 session['user_id'] = user.get('id') 
                 session['authenticated_verification'] = True
                 session['username'] =f"{user.get('first_name')} {user.get('last_name')}"  
         
-                flash('Login successful', 'success')
+                # flash('Login successful', 'success')
                 return {"success":True,"message":'User found.'}
             return {"success":False,"message":'Password invalid. Please try again.'}
         return {"success":False,"message":'User not found. Please register.'}

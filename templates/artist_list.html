@@ -5,13 +5,14 @@
 
 {% block content %}
 <button type="button" class="btn btn-primary" onclick="register_artist()" style="margin-left: 50px;margin-bottom: 10px;width: 110px; font-size: 12px; white-space: nowrap;text-overflow: ellipsis;"> ADD ARTIST</button>
+<button type="button" class="btn btn-primary" onclick="upload_csv()" style="margin-left: 50px;margin-bottom: 10px;width: 110px; font-size: 12px; white-space: nowrap;text-overflow: ellipsis;">UPLOAD CSV</button>
 
-<form method="POST" enctype="multipart/form-data" action="/upload_csv">
+<!-- <form method="POST" enctype="multipart/form-data" action="/upload_csv">
     <input type="text" hidden="hidden" name="csrf_token" value="{{csrf_token()}}">
    
     <input type="file" name="csv_file">
     <input type="submit" value="Upload">
-</form>
+</form> -->
 
 <div class="row" style="padding-left:4%;margin: 0;">
 
@@ -45,9 +46,23 @@
 <div id="myModal" class="modal">
 
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close" id="close">&times;</span>
         <div id="editfarmtoolbody" >
 
+        </div>
+    </div>
+
+</div>
+<div id="myModalS" class="modal">
+
+    <div class="modal-content">
+        <span class="close" id="close" onclick="closeModal()">&times;</span>
+            <form method="POST" enctype="multipart/form-data" action="/upload_csv">
+                <input type="text" hidden="hidden" name="csrf_token" value="{{csrf_token()}}" >
+            
+                <input type="file" name="csv_file" required>
+                <input type="submit" value="Upload">
+            </form>
         </div>
     </div>
 
@@ -114,17 +129,7 @@ $(document).ready(function() {
 						]
                 
                 });
-                var modal = document.getElementById("myModal");
-
-                var btn = document.getElementById("myBtn");
-
-                var span = document.getElementsByClassName("close")[0];
-
-                
-
-                span.onclick = function() {
-                modal.style.display = "none";
-                }
+       
 
                     $('#empTable').on('click', 'tbody tr', function() {
                     $('.god').show();
@@ -158,6 +163,28 @@ $(document).ready(function() {
                 
 </script>
 <script>
+    var modal = document.getElementById("myModal");
+
+    var btn = document.getElementById("myBtn");
+
+    var span = document.getElementsByClassName("close")[0];
+
+
+
+
+    $('#close').on('click', function() {
+
+
+        modal.style.display = "none";
+    })
+</script>
+<script>
+    function closeModal() {
+      var modal = document.getElementById("myModalS"); 
+      modal.style.display = "none";
+    }
+    </script>
+<script>
     function register_artist(){
         var modal = document.getElementById("myModal");
         var btn = document.getElementById("myBtn");
@@ -184,6 +211,15 @@ $(document).ready(function() {
 
 
     }
+</script>
+<script>
+    function upload_csv(){
+        var modal = document.getElementById("myModalS");
+     
+        modal.style.display = "block";
+        // modal.style.display = "none";
+    }
+
 </script>
 {% endblock %}
 

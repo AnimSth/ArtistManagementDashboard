@@ -132,7 +132,7 @@ def edit_user(user_info: dict):
                     ),
                 )
                 connection.commit()
-                flash('Admin user updated successfully.', 'success')
+                flash('User updated successfully.', 'success')
                 return {"success": True, "message": 'User updated successfully.'}
             else:
                 return {"success": False, "message": 'User not found.'}
@@ -267,15 +267,19 @@ def edit_artist(artist_info: dict):
 def delete_artist(user_id: int):
     try:
         with psycopg2.connect(db_config) as connection, connection.cursor() as cursor:
-            # Check if the user exists based on their ID
             select_query = "SELECT 1 FROM artist WHERE id = %s;"
             cursor.execute(select_query, (user_id,))
             user = cursor.fetchone()
 
             if user:
                 # Delete the user
+                delete_music_query = "DELETE FROM music WHERE artist_id = %s;"
+                cursor.execute(delete_music_query, (user_id,))
+
                 delete_query = "DELETE FROM artist WHERE id = %s;"
                 cursor.execute(delete_query, (user_id,))
+
+
                 connection.commit()
                 flash('Artist deleted successfully.', 'success')
                 return {"success": True, "message": 'Artist deleted successfully.'}
@@ -326,7 +330,6 @@ def edit_Amusic(music_info: dict,id:int):
             select_query = "SELECT 1 FROM music WHERE artist_id = %s AND title ILIKE %s;"
             cursor.execute(select_query, (id,music_info.get('prev_title'),))
             title = cursor.fetchone()
-            print(title)
             if title is not None:
                 update_query = """
                     UPDATE music
@@ -375,7 +378,7 @@ def delete_song(artist_id: int,title:str):
                 delete_query = "DELETE FROM music WHERE artist_id = %s AND title ILIKE %s;"
                 cursor.execute(delete_query, (artist_id,title))
                 connection.commit()
-                flash('Artist deleted successfully.', 'success')
+                flash('Song deleted successfully.', 'success')
                 return {"success": True, "message": 'Song deleted successfully.'}
             else:
                 return {"success": False, "message": 'Song not found.'}

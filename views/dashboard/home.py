@@ -211,7 +211,7 @@ def edit_user_route(id):
             "phonenumber" : request.form.get('phonenumber'),
             "address" : request.form.get('address'),
             "gender" : request.form.get('gender'),
-            "password" : request.form.get('password'),
+            # "password" : request.form.get('password'),
             }
         dob = registeredUser_info.get('dob')
         session['submitted_data'] = request.form
@@ -239,7 +239,8 @@ def delete_user_route(id):
 
 @dash.route('/delete_artist/<id>',methods= ['POST','GET'])
 def delete_artist_route(id):  
-    delete_artist(id)
+    s =delete_artist(id)
+    print(s)
     return redirect('/ArtistList') 
 
 @dash.route('/delete_artists_music/<id>/<title>',methods= ['POST','GET'])
@@ -305,9 +306,9 @@ def register_artist():
             if validate_user["success"]:
                 return redirect('/ArtistList')
             flash(validate_user["message"], 'danger') 
-            return redirect('/register_artist')           
+            return redirect('/ArtistList')            
         flash(form["message"], 'danger')
-        return redirect('/register_artist')
+        return redirect('/ArtistList') 
     submitted_data = session.get('submitted_data', {})
     return render_template('register_artist.html',submitted_data=submitted_data)
 
@@ -377,7 +378,6 @@ def upload_csv():
             
             with psycopg2.connect(db_config) as connection:
                 with connection.cursor() as cursor:
-                    table_name = "artist"
                     
                     for _, row in df.iterrows():
                         filtered_dict = {key: row[key] for key in ['name', 'dob', 'gender','address','first_release_year','no_of_albums_released']}
@@ -389,7 +389,7 @@ def upload_csv():
                         form = form.validate()
                         if form["success"]:
                             session.pop('submitted_data', None)
-                            validate_user = artist_registration(filtered_dict)
+                            validate_user = artist_registrationWithNoflash(filtered_dict)
                             if validate_user["success"]:
                                 flash(f"{row['name']}'s document inserted.", 'success') 
                             else:
@@ -400,6 +400,7 @@ def upload_csv():
             return redirect('/ArtistList')
             
         except Exception as e:
+            flash('Please ensure that the file consist of required columns.','danger')
             print(f"An error occurred: {str(e)}")
             return redirect('/ArtistList')
     else:

@@ -90,7 +90,7 @@
                     <div class="col-md-6 mb-4 pb-2">
     
                       <div class="form-outline">
-                        <input type="number" id="no_of_albums_released" class="form-control form-control-sm"  name="no_of_albums_released"  value="{{ submitted_data.no_of_albums_released|default('') }}" placeholder="No. of albums released" required>
+                        <input type="number" id="no_of_albums_released" min="1" step="1" class="form-control form-control-sm"  name="no_of_albums_released"  value="{{ submitted_data.no_of_albums_released|default('') }}" placeholder="No. of albums released" required>
                       </div>
     
                     </div>
