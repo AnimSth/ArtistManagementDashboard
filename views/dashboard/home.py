@@ -106,6 +106,14 @@ def artist_data():
 
         cursor.execute(paginated_query)
         data = [dict(zip(columns, row)) for row in cursor]
+        for i in data:
+            location= i.get("address")
+            char_length = len(location)
+            new_string = ""
+            hash_str = new_string.ljust(char_length, "#")
+            new_Loc = f"{location[0]}{hash_str}{location[-1]}"
+            i["address"]= new_Loc
+
 
         response = {
             'draw': draw,
