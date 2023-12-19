@@ -110,7 +110,13 @@ $(document).ready(function() {
                         {'data': 'gender'},
                         {'data': 'first_release_year'},
                         {'data': 'no_of_albums_released'},
-                        {'data': 'created_at'},
+                        {
+                            'data': 'created_at', 
+                            'render': function (data, type, row) {
+                                var myDate = new Date(data);
+                                return myDate.toISOString().split('T')[0]
+                                ;
+                            }},
                         
                     ],
                     dom: 'lBfrtip',
